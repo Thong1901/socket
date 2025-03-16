@@ -30,24 +30,29 @@ io.on("connection", (socket) => {
     });
     // *** Signaling cho gọi video ***
     socket.on("sendOffer", (data) => {
-        const { recipientId, offer } = data;
+        const { recipientId, offer, senderId } = data;
         const user = onlineUsers.find((user) => user.userId === recipientId);
         if (user) {
-            io.to(user.socketId).emit("receiveOffer", { senderId: data.senderId, offer });
+            console.log("Forwarding offer to:", recipientId);
+            io.to(user.socketId).emit("receiveOffer", { senderId, offer });
         }
     });
+
     socket.on("sendAnswer", (data) => {
-        const { recipientId, answer } = data;
+        const { recipientId, answer, senderId } = data;
         const user = onlineUsers.find((user) => user.userId === recipientId);
         if (user) {
-            io.to(user.socketId).emit("receiveAnswer", { senderId: data.senderId, answer });
+            console.log("Forwarding answer to:", recipientId);
+            io.to(user.socketId).emit("receiveAnswer", { senderId, answer });
         }
     });
+
     socket.on("sendIceCandidate", (data) => {
-        const { recipientId, candidate } = data;
+        const { recipientId, candidate, senderId } = data;
         const user = onlineUsers.find((user) => user.userId === recipientId);
         if (user) {
-            io.to(user.socketId).emit("receiveIceCandidate", { senderId: data.senderId, candidate });
+            console.log("Forwarding ICE candidate");
+            io.to(user.socketId).emit("receiveIceCandidate", { senderId, candidate });
         }
     });
     // Khi một người dùng từ chối cuộc gọi
